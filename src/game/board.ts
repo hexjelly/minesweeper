@@ -7,6 +7,7 @@ export class Board {
 	rows: number;
 	cols: number;
 	state: Cell[][];
+	lost = false;
 
 	constructor(options?: BoardOptions) {
 		this.cols = options?.cols ?? 5;
@@ -17,6 +18,23 @@ export class Board {
 				(_colCell) => new Cell({ mine: Math.random() > 0.7 }),
 			),
 		);
+	}
+
+	reveal(
+		row: number,
+		col: number,
+	): { mine: boolean; neighbouringMineCount: number; lost: boolean } {
+		const cell = this.state[row][col];
+
+		if (cell.mine) {
+			this.lost = true;
+		}
+
+		return {
+			lost: this.lost,
+			mine: cell.mine,
+			neighbouringMineCount: cell.neighbouringMineCount,
+		};
 	}
 }
 
