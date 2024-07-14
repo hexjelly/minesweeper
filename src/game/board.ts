@@ -18,6 +18,39 @@ export class Board {
 				(_colCell) => new Cell({ mine: Math.random() > 0.7 }),
 			),
 		);
+
+		this.countMines();
+	}
+
+	private countMines() {
+		// biome-ignore format: pls no
+		const directions: [number, number][] = [
+			[-1, -1], [-1, 0], [-1, 1], // top-left, top, top-right
+			[0, -1],			     [0, 1], // left,        , right
+			[1, -1],  [1, 0],  [1, 1], // bottom-left, bottom, bottom-right
+		];
+
+		const rows = this.rows;
+		const cols = this.cols;
+
+		for (let x = 0; x < rows; x++) {
+			for (let y = 0; y < cols; y++) {
+				let mineCount = 0;
+
+				for (const [dx, dy] of directions) {
+					const newX = x + dx;
+					const newY = y + dy;
+					if (newX >= 0 && newX < rows && newY >= 0 && newY < cols) {
+						const cell = this.state[newX][newY];
+						if (cell.mine) {
+							mineCount++;
+						}
+					}
+				}
+
+				this.state[x][y].setNeighbouringMineCount(mineCount);
+			}
+		}
 	}
 
 	reveal(
